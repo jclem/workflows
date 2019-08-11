@@ -1,0 +1,31 @@
+name: Empty Downloads
+bundle-id: com.jclem.alfred.empty-downloads
+author: Jonathan Clem <jonathan@jclem.net>
+url: https://github.com/jclem/workflows/tree/master/empty-downloads
+description: Toggles the macOS dark mode setting
+icon: icon.png
+version: 1.0.0
+
+objects:
+  keyword:
+    type: keyword
+    config:
+      keyword: empty downloads
+      argument: none
+      title: Empty Downloads
+      subtitle: Sends the contents of ~/Downloads to the trash
+    then: [object: empty-downloads]
+
+  empty-downloads:
+    type: script
+    config:
+      script:
+        type: ruby
+        content: |
+          path_list = Dir.glob("#{Dir.home}/Downloads/*").map { |path|
+            %Q(the POSIX file "#{path}")
+          }.join(', ')
+
+          cmd = %Q(tell app "Finder" to move {#{path_list}} to trash)
+
+          system("osascript", "-e", cmd)

@@ -1,5 +1,6 @@
 name: Dark Mode
 author: Jonathan Clem <jonathan@jclem.net>
+bundle-id: com.jclem.alfred.toggle-dark
 url: https://github.com/jclem/workflows/tree/master/toggle-dark
 description: Toggles the macOS dark mode setting
 icon: icon.png

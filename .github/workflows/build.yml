@@ -1,0 +1,36 @@
+on: repository_dispatch
+
+jobs:
+  build-workflows:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+      name: Checkout
+    - uses: jclem/alpaca-action@master
+      name: Build "Toggle Dark"
+      with:
+        args: pack toggle-dark
+    - name: Build "Empty Downloads"
+      uses: jclem/alpaca-action@master
+      with:
+        args: pack empty-downloads
+    - name: Create release
+      run: |
+        release_id=$(curl -f -X POST https://api.github.com/repos/jclem/workflows/releases \
+          -H "Accept: application/json" \
+          -H "Authorization: Bearer ${{github.token}}" \
+          -H "Content-type: application/json" \
+          -d '
+          {
+            "tag_name": "${{github.event.action}}",
+            "name": "${{github.event.action}}",
+            "draft": true
+          }
+          ' | jq -r .id)
+
+        for file in *.alfredworkflow; do
+          curl -f -X POST "https://uploads.github.com/repos/jclem/workflows/releases/$release_id/assets?name=$file" \
+            -H "Authorization: Bearer ${{github.token}}" \
+            -H "Content-type: application/zip" \
+            --data-binary "@$file"
+        done

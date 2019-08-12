@@ -30,7 +30,7 @@ jobs:
 
         for file in *.alfredworkflow; do
           name=$(ruby -e "puts URI.encode(\"$file\")")
-          echo "Creating release asset: $file as $file"
+          echo "Creating release asset: $file as $name"
 
           curl -f -X POST "https://uploads.github.com/repos/jclem/workflows/releases/$release_id/assets?name=$name" \
             -H "Authorization: Bearer ${{github.token}}" \

@@ -29,7 +29,7 @@ jobs:
           ' | jq -r .id)
 
         for file in *.alfredworkflow; do
-          name=$(ruby -e "puts URI.encode(\"$file\")")
+          name=$(node -e "process.stdout.write(encodeURIComponent(\"$file\"))")
           echo "Creating release asset: $file as $name"
 
           curl -f -X POST "https://uploads.github.com/repos/jclem/workflows/releases/$release_id/assets?name=$name" \

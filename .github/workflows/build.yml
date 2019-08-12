@@ -1,0 +1,14 @@
+on: push
+
+jobs:
+  build-workflows:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: jclem/alpaca-action@master
+      with:
+        args: pack toggle-dark
+    - uses: jclem/alpaca-action@master
+      with:
+        args: pack empty-downloads
+    - run: ls

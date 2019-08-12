@@ -28,12 +28,12 @@ jobs:
           }
           ' | jq -r .id)
 
-        for file in *.alfredworkflow; do
-          name=$(node -e "process.stdout.write(encodeURIComponent(\"$file\"))")
-          echo "Creating release asset: $file as $name"
+        tar czfv workflows.tar.gz *.alfredworkflow
+        file=workflows.tar.gz
+        name=$(node -e "process.stdout.write(encodeURIComponent(\"$file\"))")
+        echo "Creating release asset: $file as $name"
 
-          curl -f -X POST "https://uploads.github.com/repos/jclem/workflows/releases/$release_id/assets?name=$name" \
-            -H "Authorization: Bearer ${{github.token}}" \
-            -H "Content-type: application/zip" \
-            --data-binary "@$file"
-        done
+        curl -f -X POST "https://uploads.github.com/repos/jclem/workflows/releases/$release_id/assets?name=$name" \
+          -H "Authorization: Bearer ${{github.token}}" \
+          -H "Content-type: application/zip" \
+          --data-binary "@$file"

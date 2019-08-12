@@ -29,7 +29,10 @@ jobs:
           ' | jq -r .id)
 
         for file in *.alfredworkflow; do
-          curl -f -X POST "https://uploads.github.com/repos/jclem/workflows/releases/$release_id/assets?name=$file" \
+          name=$(ruby -e "puts URI.encode(\"$file\")")
+          echo "Creating release asset: $file as $file"
+
+          curl -f -X POST "https://uploads.github.com/repos/jclem/workflows/releases/$release_id/assets?name=$name" \
             -H "Authorization: Bearer ${{github.token}}" \
             -H "Content-type: application/zip" \
             --data-binary "@$file"

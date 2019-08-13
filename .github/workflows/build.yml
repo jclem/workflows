@@ -1,24 +1,29 @@
 on: repository_dispatch
 
+name: Build and Create Release
+
 jobs:
   build-workflows:
+    name: Build and create release
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
       name: Checkout
-    - uses: jclem/alpaca-action@master
-      name: Build "Toggle Dark"
+    - name: Build "Toggle Dark"
+      uses: jclem/alpaca-action@master
       with:
         args: pack toggle-dark
     - name: Build "Empty Downloads"
       uses: jclem/alpaca-action@master
       with:
         args: pack empty-downloads
+    - name: Create release archive
+      run: tar czfv workflows.tar.gz *.alfredworkflow
     - name: Create release
       uses: jclem/github-release@master
       with:
         tag-name: ${{github.event.action}}
         name: ${{github.event.action}}
         draft: true
-        assets: "*.alfredworkflow"
+        assets: workflows.tar.gz
         github-token: ${{github.token}}

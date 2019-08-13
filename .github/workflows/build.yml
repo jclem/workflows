@@ -20,5 +20,5 @@ jobs:
         tag-name: ${{github.event.action}}
         name: ${{github.event.action}}
         draft: true
-        assets: *.alfredworkflow
+        assets: "*.alfredworkflow"
         github-token: ${{github.token}}

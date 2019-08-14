@@ -17,6 +17,10 @@ jobs:
       uses: jclem/alpaca-action@master
       with:
         args: pack empty-downloads
+    - name: Build "Re-tab"
+      uses: jclem/alpaca-action@master
+      with:
+        args: pack re-tab
     - name: Create release archive
       run: tar czfv workflows.tar.gz *.alfredworkflow
     - name: Create release

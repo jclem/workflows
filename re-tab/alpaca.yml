@@ -1,0 +1,67 @@
+name: Re-tab
+author: Jonathan Clem <jonathan@jclem.net>
+bundle-id: com.jclem.alfred.retab
+url: https://github.com/jclem/workflows/tree/master/re-tab
+description: Toggles tabs/spaces in the text in the clipboard
+icon: icon.png
+version: 1.0.0
+
+objects:
+  retab:
+    type: script-filter
+    config:
+      keyword: retab
+      argument: required
+      with-space: true
+      title: Re-tab the contents of the clipboard
+      script:
+        type: ruby
+        content: |
+          require 'json'
+
+          content = `pbpaste`
+
+          type = ARGV[0]
+
+          if type =~ /\At(?: \d+)?\z/
+            count = type.split(/\s+/)[1]
+            count ||= 2
+            target = " " * count.to_i
+            indent = "\t"
+            convert = "#{count} spaces to tabs"
+          elsif type =~ /\As(?: \d+)?\z/
+            count = type.split(/\s+/)[1]
+            count ||= 2
+            target = "\t"
+            indent = " " * count.to_i
+            convert = "tabs to #{count} spaces"
+          else
+            raise "Type must be 't' or 's'"
+          end
+        
+          regexp = Regexp.new("\\A(?<leading>(?:#{target})*)(?<trailing>.*)")
+
+          result = content.lines.reduce([]) { |lines, line|
+            match = line.match(regexp)
+
+            if match[:leading] 
+              count = match[:leading].scan(target).count
+              leading = indent * count
+              lines << (leading + match[:trailing])
+            else
+              lines << line
+            end
+          }.join('\n')
+
+          puts JSON.dump({
+            items: [{
+              title: "Convert #{convert}",
+              arg: result
+            }]
+          })
+    then: [object: copy]
+
+  copy:
+    type: clipboard
+    config:
+      text: '{query}'
